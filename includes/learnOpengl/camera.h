@@ -1,8 +1,8 @@
 /* This file originated from website LearnOpenGL.com, which distributes the code
 with the following information regarding licensing:
 
-All code samples, unless explicitly stated otherwise, are licensed under the terms 
-of the CC BY-NC 4.0 license as published by Creative Commons, either version 4 of 
+All code samples, unless explicitly stated otherwise, are licensed under the terms
+of the CC BY-NC 4.0 license as published by Creative Commons, either version 4 of
 the License, or (at your option) any later version. You can find a human-readable format of the license
 
 https://creativecommons.org/licenses/by-nc/4.0/
@@ -125,11 +125,11 @@ public:
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset)
     {
-        Zoom -= (float)yoffset;
-        if (Zoom < 1.0f)
-            Zoom = 1.0f;
-        if (Zoom > 45.0f)
-            Zoom = 45.0f; 
+        MovementSpeed += (float)yoffset;
+        if (MovementSpeed < 1.0f)
+            MovementSpeed = 1.0f;
+        if (MovementSpeed > 45.0f)
+            MovementSpeed = 45.0f;
     }
 
 private:

@@ -21,37 +21,36 @@ using namespace std; // Standard namespace
 // Unnamed namespace
 namespace
 {
-const char* const WINDOW_TITLE = "4-3 Basic Camera Movement"; // Macro for window title
+    const char* const WINDOW_TITLE = "4-3 Basic Camera Movement"; // Macro for window title
 
-// Variables for window width and height
-const int WINDOW_WIDTH = 800;
-const int WINDOW_HEIGHT = 600;
+    // Variables for window width and height
+    const int WINDOW_WIDTH = 800;
+    const int WINDOW_HEIGHT = 600;
 
-// Stores the GL data relative to a given mesh
-struct GLMesh
-{
-    GLuint vao;         // Handle for the vertex array object
-    GLuint vbo;         // Handle for the vertex buffer object
-    GLuint nVertices;    // Number of indices of the mesh
-};
+    // Stores the GL data relative to a given mesh
+    struct GLMesh
+    {
+        GLuint vao;         // Handle for the vertex array object
+        GLuint vbo;         // Handle for the vertex buffer object
+        GLuint nVertices;    // Number of indices of the mesh
+    };
 
-// Main GLFW window
-GLFWwindow* gWindow = nullptr;
-// Triangle mesh data
-GLMesh gMesh;
-// Shader program
-GLuint gProgramId;
+    // Main GLFW window
+    GLFWwindow* gWindow = nullptr;
+    // Triangle mesh data
+    GLMesh gMesh;
+    // Shader program
+    GLuint gProgramId;
 
-// camera
-Camera gCamera(glm::vec3(0.0f, 0.0f, 3.0f));
-float gLastX = WINDOW_WIDTH / 2.0f;
-float gLastY = WINDOW_HEIGHT / 2.0f;
-bool gFirstMouse = true;
+    // camera
+    Camera gCamera(glm::vec3(0.0f, 0.0f, 3.0f));
+    float gLastX = WINDOW_WIDTH / 2.0f;
+    float gLastY = WINDOW_HEIGHT / 2.0f;
+    bool gFirstMouse = true;
 
-// timing
-float gDeltaTime = 0.0f; // time between current frame and last frame
-float gLastFrame = 0.0f;
-
+    // timing
+    float gDeltaTime = 0.0f; // time between current frame and last frame
+    float gLastFrame = 0.0f;
 }
 
 /* User-defined Function prototypes to:
@@ -104,7 +103,6 @@ const GLchar * fragmentShaderSource = GLSL(440,
     }
 );
 
-
 int main(int argc, char* argv[])
 {
     if (!UInitialize(argc, argv, &gWindow))
@@ -148,7 +146,6 @@ int main(int argc, char* argv[])
 
     exit(EXIT_SUCCESS); // Terminates the program successfully
 }
-
 
 // Initialize GLFW, GLEW, and create a window
 bool UInitialize(int argc, char* argv[], GLFWwindow** window)
@@ -200,7 +197,6 @@ bool UInitialize(int argc, char* argv[], GLFWwindow** window)
     return true;
 }
 
-
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void UProcessInput(GLFWwindow* window)
 {
@@ -223,13 +219,11 @@ void UProcessInput(GLFWwindow* window)
         gCamera.ProcessKeyboard(DOWN, gDeltaTime);
 }
 
-
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 void UResizeWindow(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
@@ -250,7 +244,6 @@ void UMousePositionCallback(GLFWwindow* window, double xpos, double ypos)
 
     gCamera.ProcessMouseMovement(xoffset, yoffset);
 }
-
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
@@ -298,7 +291,6 @@ void UMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     }
 }
 
-
 // Function called to render a frame
 void URender()
 {
@@ -323,6 +315,11 @@ void URender()
     // Creates a perspective projection
     glm::mat4 projection = glm::perspective(glm::radians(gCamera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f);
 
+        // 1. Scales the object by 2
+    glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 2.0f));
+    // 2. Rotates shape by 15 degrees in the x axis
+    glm::mat4 rotation = glm::rotate(45.0f, glm::vec3(1.0, 1.0f, 1.0f));
+
     // Set the shader to be used
     glUseProgram(gProgramId);
 
@@ -337,10 +334,6 @@ void URender()
     // Activate the VBOs contained within the mesh's VAO
     glBindVertexArray(gMesh.vao);
 
-    // 1. Scales the object by 2
-    glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 2.0f));
-    // 2. Rotates shape by 15 degrees in the x axis
-    glm::mat4 rotation = glm::rotate(45.0f, glm::vec3(1.0, 1.0f, 1.0f));
 
     for (int i = 0; i < nrows; ++i)
     {
@@ -354,7 +347,6 @@ void URender()
                 // Model matrix: transformations are applied right-to-left order
                 glm::mat4 model = translation * rotation * scale;
                 glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            
                 // Draws the triangles
                 glDrawArrays(GL_TRIANGLES, 0, gMesh.nVertices);
             }
@@ -367,7 +359,6 @@ void URender()
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(gWindow);    // Flips the the back buffer with the front buffer every frame.
 }
-
 
 // Implements the UCreateMesh function
 void UCreateMesh(GLMesh &mesh)

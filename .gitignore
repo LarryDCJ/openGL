@@ -1,4 +1,7 @@
 .vscode
 build
-*.code-workspace
 main
+week*.cpp
+*.code-workspace
+*.zip
+
