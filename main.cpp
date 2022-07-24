@@ -21,7 +21,7 @@ using namespace std; // Standard namespace
 // Unnamed namespace
 namespace
 {
-const char* const WINDOW_TITLE = "Tutorial 4.5"; // Macro for window title
+const char* const WINDOW_TITLE = "4-3 Basic Camera Movement"; // Macro for window title
 
 // Variables for window width and height
 const int WINDOW_WIDTH = 800;
@@ -217,6 +217,10 @@ void UProcessInput(GLFWwindow* window)
         gCamera.ProcessKeyboard(LEFT, gDeltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         gCamera.ProcessKeyboard(RIGHT, gDeltaTime);
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        gCamera.ProcessKeyboard(UP, gDeltaTime);
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        gCamera.ProcessKeyboard(DOWN, gDeltaTime);
 }
 
 
