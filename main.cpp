@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 #include <iostream>             // cout, cerr
 #include <cstdlib>              // EXIT_FAILURE
 #include <GL/glew.h>            // GLEW library
