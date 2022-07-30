@@ -1,17 +1,16 @@
+#include <iostream>         // cout, cerr
+#include <cstdlib>          // EXIT_FAILURE
+#include <GL/glew.h>        // GLEW library
+#include <GLFW/glfw3.h>     // GLFW library
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-#include <iostream>             // cout, cerr
-#include <cstdlib>              // EXIT_FAILURE
-#include <GL/glew.h>            // GLEW library
-#include <GLFW/glfw3.h>         // GLFW library
+#include <stb_image.h>      // Image loading Utility functions
 
 // GLM Math Header inclusions
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// learnOpengl camera package
-#include <learnOpengl/camera.h>
+#include <learnOpengl/camera.h> // Camera class
 
 using namespace std; // Standard namespace
 
@@ -23,43 +22,41 @@ using namespace std; // Standard namespace
 // Unnamed namespace
 namespace
 {
-    const char* const WINDOW_TITLE = "5-3 Texturing A Pyramid"; // Macro for window title
+const char* const WINDOW_TITLE = "Tutorial 5.4"; // Macro for window title
 
-    // Variables for window width and height
-    const int WINDOW_WIDTH = 800;
-    const int WINDOW_HEIGHT = 600;
+// Variables for window width and height
+const int WINDOW_WIDTH = 800;
+const int WINDOW_HEIGHT = 600;
 
-    // Stores the GL data relative to a given mesh
-    struct GLMesh
-    {
-        GLuint vao;         // Handle for the vertex array object
-        GLuint vbo;         // Handle for the vertex buffer object // Vertex buffer object is a buffer object that stores actual data for the vertices of an mesh. 2 items
-        GLuint nVertices;    // Number of indices of the mesh
-    };
+// Stores the GL data relative to a given mesh
+struct GLMesh
+{
+    GLuint vao;         // Handle for the vertex array object
+    GLuint vbo;         // Handle for the vertex buffer object
+    GLuint nVertices;    // Number of indices of the mesh
+};
 
-    // Main GLFW window
-    GLFWwindow* gWindow = nullptr;
+// Main GLFW window
+GLFWwindow* gWindow = nullptr;
+// Triangle mesh data
+GLMesh gMesh;
+// Texture
+GLuint gTextureId;
+glm::vec2 gUVScale(5.0f, 5.0f);
+GLint gTexWrapMode = GL_REPEAT;
 
-    // Triangle mesh data
-    GLMesh gMesh;
+// Shader program
+GLuint gProgramId;
 
-    // Texture id
-    GLuint gTextureId;
-    glm::vec2 gUVScale(5.0f, 5.0f);
-    GLint gTexWrapMode = GL_REPEAT;
+// camera
+Camera gCamera(glm::vec3(0.0f, 0.0f, 5.0f));
+float gLastX = WINDOW_WIDTH / 2.0f;
+float gLastY = WINDOW_HEIGHT / 2.0f;
+bool gFirstMouse = true;
 
-    // Shader program
-    GLuint gProgramId;
-
-    // Movement - Camera
-    Camera gCamera(glm::vec3(0.0f, 0.0f, 3.0f));
-    float gLastX = WINDOW_WIDTH / 2.0f;
-    float gLastY = WINDOW_HEIGHT / 2.0f;
-    bool gFirstMouse = true;
-
-    // Frame Timing
-    float gDeltaTime = 0.0f; // time between current frame and last frame
-    float gLastFrame = 0.0f;
+// timing
+float gDeltaTime = 0.0f; // time between current frame and last frame
+float gLastFrame = 0.0f;
 
 }
 
@@ -71,26 +68,27 @@ namespace
 bool UInitialize(int, char*[], GLFWwindow** window);
 void UResizeWindow(GLFWwindow* window, int width, int height);
 void UProcessInput(GLFWwindow* window);
+void UMousePositionCallback(GLFWwindow* window, double xpos, double ypos);
+void UMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+void UMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void UCreateMesh(GLMesh &mesh);
 void UDestroyMesh(GLMesh &mesh);
-bool UCreateTexture(const char* fileName, GLuint &textureId);
+bool UCreateTexture(const char* filename, GLuint &textureId);
 void UDestroyTexture(GLuint textureId);
 void URender();
 bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource, GLuint &programId);
 void UDestroyShaderProgram(GLuint programId);
 
-void UMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void UMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-void UMousePositionCallback(GLFWwindow* window, double xpos, double ypos);
 
 /* Vertex Shader Source Code*/
 const GLchar * vertexShaderSource = GLSL(440,
-    layout (location = 0) in vec3 position; // Vertex data from Vertex Attrib Pointer 0
-    layout (location = 2) in vec2 textureCoordinate;  // Color data from Vertex Attrib Pointer 1
+    layout (location = 0) in vec3 position;
+    layout (location = 2) in vec2 textureCoordinate;
 
-    out vec2 vertexTextureCoordinate; // variable to transfer color data to the fragment shader
+    out vec2 vertexTextureCoordinate;
 
-    //Global variables for the transform matrices - Camera Movement
+
+    //Global variables for the transform matrices
     uniform mat4 model;
     uniform mat4 view;
     uniform mat4 projection;
@@ -98,7 +96,7 @@ const GLchar * vertexShaderSource = GLSL(440,
     void main()
     {
         gl_Position = projection * view * model * vec4(position, 1.0f); // transforms vertices to clip coordinates
-        vertexTextureCoordinate = textureCoordinate; // reference incoming texture
+        vertexTextureCoordinate = textureCoordinate;
     }
 );
 
@@ -117,6 +115,7 @@ const GLchar * fragmentShaderSource = GLSL(440,
         fragmentColor = texture(uTexture, vertexTextureCoordinate * uvScale);
     }
 );
+
 
 // Images are loaded with Y axis going down, but OpenGL's Y axis goes up, so let's flip it
 void flipImageVertically(unsigned char *image, int width, int height, int channels)
@@ -137,6 +136,7 @@ void flipImageVertically(unsigned char *image, int width, int height, int channe
     }
 }
 
+
 int main(int argc, char* argv[])
 {
     if (!UInitialize(argc, argv, &gWindow))
@@ -149,16 +149,15 @@ int main(int argc, char* argv[])
     if (!UCreateShaderProgram(vertexShaderSource, fragmentShaderSource, gProgramId))
         return EXIT_FAILURE;
 
-    // Load texture (relative to project's directory)
-    const char * texFilename = "./bricks.png";
-    if (!UCreateTexture(texFilename, gTextureId)) {
+    // Load texture
+    const char * texFilename = "../../resources/textures/smiley.png";
+    if (!UCreateTexture(texFilename, gTextureId))
+    {
         cout << "Failed to load texture " << texFilename << endl;
         return EXIT_FAILURE;
     }
-
-        // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
+    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     glUseProgram(gProgramId);
-
     // We set the texture as texture unit 0
     glUniform1i(glGetUniformLocation(gProgramId, "uTexture"), 0);
 
@@ -197,6 +196,7 @@ int main(int argc, char* argv[])
     exit(EXIT_SUCCESS); // Terminates the program successfully
 }
 
+
 // Initialize GLFW, GLEW, and create a window
 bool UInitialize(int argc, char* argv[], GLFWwindow** window)
 {
@@ -222,7 +222,6 @@ bool UInitialize(int argc, char* argv[], GLFWwindow** window)
     }
     glfwMakeContextCurrent(*window);
     glfwSetFramebufferSizeCallback(*window, UResizeWindow);
-
     glfwSetCursorPosCallback(*window, UMousePositionCallback);
     glfwSetScrollCallback(*window, UMouseScrollCallback);
     glfwSetMouseButtonCallback(*window, UMouseButtonCallback);
@@ -248,6 +247,7 @@ bool UInitialize(int argc, char* argv[], GLFWwindow** window)
     return true;
 }
 
+
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void UProcessInput(GLFWwindow* window)
 {
@@ -264,11 +264,6 @@ void UProcessInput(GLFWwindow* window)
         gCamera.ProcessKeyboard(LEFT, gDeltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         gCamera.ProcessKeyboard(RIGHT, gDeltaTime);
-
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        gCamera.ProcessKeyboard(UP, gDeltaTime);
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        gCamera.ProcessKeyboard(DOWN, gDeltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && gTexWrapMode != GL_REPEAT)
     {
@@ -328,17 +323,15 @@ void UProcessInput(GLFWwindow* window)
         gUVScale -= 0.1f;
         cout << "Current scale (" << gUVScale[0] << ", " << gUVScale[1] << ")" << endl;
     }
-
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) // press R to reset the camera
-        gCamera.Position = glm::vec3(0.0f, 0.0f, 0.0f);
-
 }
+
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 void UResizeWindow(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
@@ -359,6 +352,7 @@ void UMousePositionCallback(GLFWwindow* window, double xpos, double ypos)
 
     gCamera.ProcessMouseMovement(xoffset, yoffset);
 }
+
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
@@ -406,32 +400,24 @@ void UMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     }
 }
 
-// Function called to render a frame
+
+// Functioned called to render a frame
 void URender()
 {
     // Enable z-depth
     glEnable(GL_DEPTH_TEST);
-
+    
     // Clear the frame and z buffers
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // 1. Scales the object by 2
     glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 2.0f));
-
-    // 2. Rotates shape by 45 degrees on the x axis
+    // 2. Rotates shape by 15 degrees in the x axis
     glm::mat4 rotation = glm::rotate(45.0f, glm::vec3(1.0, 1.0f, 1.0f));
-
-    // 3. Sets object to the origin
+    // 3. Place object at the origin
     glm::mat4 translation = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-    // uncomment this for mouse based movement
-    // glm::mat4 translation = glm::translate(location);
-
-    // // Transformations are applied right-to-left order
-    // //glm::mat4 transformation = translation * rotation * scale;
-    // glm::mat4 transformation(1.0f);
-
-    // model matrix: combines all transformations from left to right
+    // Model matrix: transformations are applied right-to-left order
     glm::mat4 model = translation * rotation * scale;
 
     // camera/view transformation
@@ -440,9 +426,10 @@ void URender()
     // Creates a perspective projection
     glm::mat4 projection = glm::perspective(glm::radians(gCamera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f);
 
+    // Set the shader to be used
     glUseProgram(gProgramId);
 
-    // //Retrieves and passes transform matrices to the Shader program
+    // Retrieves and passes transform matrices to the Shader program
     GLint modelLoc = glGetUniformLocation(gProgramId, "model");
     GLint viewLoc = glGetUniformLocation(gProgramId, "view");
     GLint projLoc = glGetUniformLocation(gProgramId, "projection");
@@ -464,9 +451,6 @@ void URender()
     // Draws the triangles
     glDrawArrays(GL_TRIANGLES, 0, gMesh.nVertices);
 
-    // // Draws the triangle
-    // glDrawElements(GL_TRIANGLES, gMesh.nIndices, GL_UNSIGNED_SHORT, NULL); // DrawElements can save memory over DrawArrays in cases when the number of indices is 
-
     // Deactivate the Vertex Array Object
     glBindVertexArray(0);
 
@@ -474,63 +458,65 @@ void URender()
     glfwSwapBuffers(gWindow);    // Flips the the back buffer with the front buffer every frame.
 }
 
+
 // Implements the UCreateMesh function
 void UCreateMesh(GLMesh &mesh)
 {
-    // Vertex data
-GLfloat verts[] = {
-     //Positions          //Texture Coordinates
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     // Vertex Data
+    GLfloat verts[] = {
+         //Positions          //Texture Coordinates
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
 
     const GLuint floatsPerVertex = 3;
     const GLuint floatsPerUV = 2;
 
-    mesh.nVertices = sizeof(verts) / (sizeof(verts[0])) * (floatsPerVertex + floatsPerUV);
+    mesh.nVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerUV));
 
     glGenVertexArrays(1, &mesh.vao); // we can also generate multiple VAOs or buffers at the same time
     glBindVertexArray(mesh.vao);
 
+    // Create VBO
     glGenBuffers(1, &mesh.vbo);
     glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo); // Activates the buffer
     glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // Sends vertex or coordinate data to the GPU
@@ -542,11 +528,19 @@ GLfloat verts[] = {
     glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex)));
+    glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * floatsPerVertex));
     glEnableVertexAttribArray(2);
-
 }
 
+
+void UDestroyMesh(GLMesh &mesh)
+{
+    glDeleteVertexArrays(1, &mesh.vao);
+    glDeleteBuffers(1, &mesh.vbo);
+}
+
+
+/*Generate and load the texture*/
 bool UCreateTexture(const char* filename, GLuint &textureId)
 {
     int width, height, channels;
@@ -566,26 +560,19 @@ bool UCreateTexture(const char* filename, GLuint &textureId)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         if (channels == 3)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
         else if (channels == 4)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+        	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
         else
         {
-            cout << "Not implemented to handle image with " << channels << " channels" << endl;
-            return false;
+        	cout << "Not implemented to handle image with " << channels << " channels" << endl;
+        	return false;
         }
 
-        glGenerateMipmap(GL_TEXTURE_2D);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
         stbi_image_free(image);
-        glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture.
-
-        // wrap the texture using GL_CLAMP_TO_EDGE to avoid seams
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-
+        glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture
 
         return true;
     }
@@ -594,16 +581,12 @@ bool UCreateTexture(const char* filename, GLuint &textureId)
     return false;
 }
 
+
 void UDestroyTexture(GLuint textureId)
 {
     glGenTextures(1, &textureId);
 }
 
-void UDestroyMesh(GLMesh &mesh)
-{
-    glDeleteVertexArrays(1, &mesh.vao);
-    glDeleteBuffers(1, &mesh.vbo);
-}
 
 // Implements the UCreateShaders function
 bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource, GLuint &programId)
@@ -665,6 +648,7 @@ bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSou
 
     return true;
 }
+
 
 void UDestroyShaderProgram(GLuint programId)
 {
