@@ -10,7 +10,10 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include </home/lcawley/codebase/openGL/includes/learnOpengl/camera.h>
+#include <learnopengl/camera.h>
+#include <learnopengl/shader.h>
+#include <learnopengl/model.h>
+#include <learnopengl/mesh.h>
 
 using namespace std; // Standard namespace
 
@@ -140,6 +143,8 @@ int main(int argc, char* argv[])
 {
     if (!UInitialize(argc, argv, &gWindow))
         return EXIT_FAILURE;
+
+    Model model("./backpack.obj");
 
     // Create the mesh
     UCreateMesh(gMesh); // Calls the function to create the Vertex Buffer Object
@@ -419,14 +424,14 @@ void URender()
     glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 2.0f));
 
     // 2. Rotates shape by 45 degrees on the x axis
-    glm::mat4 rotation = glm::rotate(45.0f, glm::vec3(1.0, 1.0f, 1.0f));
+    glm::mat4 rotation = glm::rotate(0.0f, glm::vec3(1.0, 1.0f, 1.0f));
 
     // 3. Sets object to the origin
     glm::mat4 translation = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
     // uncomment this for mouse based movement
     // glm::mat4 translation = glm::translate(location);
 
-    // // Transformations are applied right-to-left order
+    // Transformations are applied right-to-left order
     // //glm::mat4 transformation = translation * rotation * scale;
     // glm::mat4 transformation(1.0f);
 
@@ -464,7 +469,7 @@ void URender()
     glDrawArrays(GL_TRIANGLES, 0, gMesh.nVertices);
 
     // // Draws the triangle
-    // glDrawElements(GL_TRIANGLES, gMesh.nIndices, GL_UNSIGNED_SHORT, NULL); // DrawElements can save memory over DrawArrays in cases when the number of indices is 
+    // glDrawElements(GL_TRIANGLES, gMesh.nIndices, GL_UNSIGNED_SHORT, NULL); // DrawElements can save memory over DrawArrays in cases when the number of indices is
 
     // Deactivate the Vertex Array Object
     glBindVertexArray(0);
@@ -477,62 +482,63 @@ void URender()
 void UCreateMesh(GLMesh &mesh)
 {
     // Vertex data
-GLfloat verts[] = {
+GLfloat pyramid[] = {
      //Positions          //Texture Coordinates
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Left Bottom Back
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // Right Bottom Back
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // Right Top Back
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // Right Top Back
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // Left Top Back
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Left Bottom Back
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // Left Bottom Front
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // Right Bottom Front
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // Right Top Front
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // Right Top Front
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // Left Top Front
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // Left Bottom Front
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Left Top Front
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // Left Top Back
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // Left Bottom Back
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // Left Bottom Back
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // Left Bottom Front
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Left Top Front
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Right Top Front
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // Right Top Back
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // Right Bottom Back
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // Right Bottom Back
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // Right Bottom Front
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Right Top Front
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // Left Bottom Back
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // Right Bottom Back
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // Right Bottom Front
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // Right Bottom Front
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // Left Bottom Front
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // Left Bottom Back
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // Left Top Back
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // Right Top Back
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Right Top Front
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Right Top Front
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, // Left Top Front
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f // Left Top Back
 };
+    // generate a coffee cup in open gl
 
     const GLuint floatsPerVertex = 3;
     const GLuint floatsPerUV = 2;
 
-    mesh.nVertices = sizeof(verts) / (sizeof(verts[0])) * (floatsPerVertex + floatsPerUV);
+    mesh.nVertices = sizeof(pyramid) / (sizeof(pyramid[0])) * (floatsPerVertex + floatsPerUV);
 
     glGenVertexArrays(1, &mesh.vao); // we can also generate multiple VAOs or buffers at the same time
     glBindVertexArray(mesh.vao);
 
     glGenBuffers(1, &mesh.vbo);
     glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo); // Activates the buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // Sends vertex or coordinate data to the GPU
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pyramid), pyramid, GL_STATIC_DRAW); // Sends vertex or coordinate data to the GPU
 
     // Strides between vertex coordinates
     GLint stride =  sizeof(float) * (floatsPerVertex + floatsPerUV);
