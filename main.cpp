@@ -1,17 +1,16 @@
+#include <iostream>         // cout, cerr
+#include <cstdlib>          // EXIT_FAILURE
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>     // GLFW library
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-#include <iostream>             // cout, cerr
-#include <cstdlib>              // EXIT_FAILURE
-#include <GL/glew.h>            // GLEW library
-#include <GLFW/glfw3.h>         // GLFW library
+#include <stb_image.h>      // Image loading Utility functions
 
 // GLM Math Header inclusions
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// learnOpengl camera package
-#include <learnOpengl/camera.h>
+#include </home/lcawley/codebase/openGL/includes/learnOpengl/camera.h>
 
 using namespace std; // Standard namespace
 
