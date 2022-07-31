@@ -10,10 +10,10 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <learnopengl/camera.h>
-#include <learnopengl/shader.h>
-#include <learnopengl/model.h>
-#include <learnopengl/mesh.h>
+#include <camera.h>
+#include </home/lcawley/codebase/openGL/shader_m.h>
+#include </home/lcawley/codebase/openGL/model.h>
+#include </home/lcawley/codebase/openGL/mesh.h>
 
 using namespace std; // Standard namespace
 
@@ -146,18 +146,19 @@ int main(int argc, char* argv[])
 
     Model model("./backpack.obj");
 
-    // Create the mesh
-    UCreateMesh(gMesh); // Calls the function to create the Vertex Buffer Object
 
-    // Create the shader program
-    if (!UCreateShaderProgram(vertexShaderSource, fragmentShaderSource, gProgramId))
-        return EXIT_FAILURE;
+    // // Create the mesh
+    // UCreateMesh(gMesh); // Calls the function to create the Vertex Buffer Object
 
-    // Load texture (relative to project's directory)
-    const char * texFilename = "./bricks.png";
-    if (!UCreateTexture(texFilename, gTextureId)) {
-        cout << "Failed to load texture " << texFilename << endl;
-        return EXIT_FAILURE;
+    // // Create the shader program
+    // if (!UCreateShaderProgram(vertexShaderSource, fragmentShaderSource, gProgramId))
+    //     return EXIT_FAILURE;
+
+    // // Load texture (relative to project's directory)
+    // const char * texFilename = "./bricks.png";
+    // if (!UCreateTexture(texFilename, gTextureId)) {
+        // cout << "Failed to load texture " << texFilename << endl;
+        // return EXIT_FAILURE;
     }
 
         // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
