@@ -1,8 +1,8 @@
 /* This file originated from website LearnOpenGL.com, which distributes the code
 with the following information regarding licensing:
 
-All code samples, unless explicitly stated otherwise, are licensed under the terms
-of the CC BY-NC 4.0 license as published by Creative Commons, either version 4 of
+All code samples, unless explicitly stated otherwise, are licensed under the terms 
+of the CC BY-NC 4.0 license as published by Creative Commons, either version 4 of 
 the License, or (at your option) any later version. You can find a human-readable format of the license
 
 https://creativecommons.org/licenses/by-nc/4.0/
@@ -15,7 +15,7 @@ https://creativecommons.org/licenses/by-nc/4.0/legalcode
 
 #ifndef CAMERA_H
 #define CAMERA_H
-#include <glew.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -26,9 +26,7 @@ enum Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT,
-    UP,
-    DOWN,
+    RIGHT
 };
 
 // Default camera values
@@ -94,10 +92,6 @@ public:
             Position -= Right * velocity;
         if (direction == RIGHT)
             Position += Right * velocity;
-        if (direction == UP)
-            Position += Up * velocity;
-        if (direction == DOWN)
-            Position -= Up * velocity;
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -125,11 +119,11 @@ public:
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset)
     {
-        MovementSpeed += (float)yoffset;
-        if (MovementSpeed < 1.0f)
-            MovementSpeed = 1.0f;
-        if (MovementSpeed > 45.0f)
-            MovementSpeed = 45.0f;
+        Zoom -= (float)yoffset;
+        if (Zoom < 1.0f)
+            Zoom = 1.0f;
+        if (Zoom > 45.0f)
+            Zoom = 45.0f; 
     }
 
 private:
