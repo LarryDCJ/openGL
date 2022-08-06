@@ -53,4 +53,8 @@ struct GLMesh
     GLint gTexWrapModeV = GL_CLAMP_TO_EDGE;
     GLint gTexWrapModeW = GL_CLAMP_TO_BORDER;
 
+    class Mesh
+    {
+    };
+
 };
