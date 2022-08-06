@@ -23,7 +23,7 @@ struct GLMesh
     GLuint vbo;         // Handle for the vertex buffer object
     GLuint vbos[2];     // Array of handles for the vertex buffer objects
 
-    // Index buffer object is a buffer object that stores indices of the mesh
+    // stores indices of the mesh
     std::vector<float> v;
     // translation properties of the mesh
     std::vector<float> p;
