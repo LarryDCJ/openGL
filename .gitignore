@@ -1,11 +1,4 @@
 .vscode
 build
-main
-week*.cpp
 *.code-workspace
 *.zip
-
-main
-week3
-week4
-CS-330-master
