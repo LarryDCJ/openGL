@@ -1,1 +1,0 @@
-g++ main.cpp -lglut -lGLEW -lGL -lGLU -lglfw3; ./a.out

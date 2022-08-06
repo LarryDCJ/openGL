@@ -1,4 +1,7 @@
+#pragma once
+
 /*
+
 ** The OpenGL Extension Wrangler Library
 ** Copyright (C) 2008-2019, Nigel Stewart <nigels[]users sourceforge net>
 ** Copyright (C) 2002-2008, Milan Ikits <milan ikits[]ieee org>
