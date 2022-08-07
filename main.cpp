@@ -87,14 +87,14 @@ bool UCreateTexture(const char* fileName, GLuint& textureId);
 
 /* Vertex Shader Source Code*/
 const GLchar *vertexShaderSource = GLSL(440,
-    layout (location = 0) in vec3 position; // Vertex data from Vertex Attrib Pointer 0
-   	layout (location = 1) in vec3 color;
-    layout (location = 2) in vec2 textureCoordinate;  // Color data from Vertex Attrib Pointer 1
+    layout(location = 0) in vec3 position; // Vertex data from Vertex Attrib Pointer 0
+   	layout(location = 1) in vec3 color;
+    layout(location = 2) in vec2 textureCoordinate;  // Color data from Vertex Attrib Pointer 1
 
     out vec3 shapeColor;
     out vec2 vertexTextureCoordinate; // variable to transfer color data to the fragment shader
 
-    //Global variables for the transform matrices - Camera Movement
+    // Camera Movement
     uniform mat4 model;
     uniform mat4 view;
     uniform mat4 projection;
@@ -120,7 +120,9 @@ const GLchar *fragmentShaderSource = GLSL(440,
 
     void main()
     {
-        fragmentColor = texture(uTexture, vertexTextureCoordinate) * vec4(shapeColor, 1.0); // multiply the texture with the color
+        fragmentColor = texture(uTexture, vertexTextureCoordinate * uvScale);
+
+        // fragmentColor = texture(uTexture, vertexTextureCoordinate) * vec4(shapeColor, 1.0); // multiply the texture with the color
     }
 );
 
