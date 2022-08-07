@@ -17,7 +17,7 @@ void SceneBuilder::UBuildScene(vector<GLMesh>& scene)
          0.0f,  1.0f, 0.0f, 0.0f, // x amount of rotation and rotation @ x y z
          0.0f,  0.0f, 1.0f, 0.0f, // y amount of rotation and rotation @ x y z
          0.0f,  0.0f, 0.0f, 1.0f, // z amount of rotation and rotation @ x y z
-         3.0f,  0.0f, 0.0f,       // translation @ x y z
+         1.0f,  0.0f, 0.0f,       // translation @ x y z
          1.0f,  1.0f              // texture size in relation to the object size
      };
      coffeeCup.texFilename = "textures/coffee_cup.png";
@@ -38,7 +38,7 @@ void SceneBuilder::UBuildScene(vector<GLMesh>& scene)
           0.0f,  1.0f, 0.0f, 0.0f, // x amount of rotation and rotation @ x y z
           0.0f,  0.0f, 1.0f, 0.0f, // y amount of rotation and rotation @ x y z
           0.0f,  0.0f, 0.0f, 1.0f, // z amount of rotation and rotation @ x y z
-          3.0f,  0.0f, 0.0f,       // translation @ x y z
+          1.0f,  0.0f, 0.0f,       // translation @ x y z
           1.0f,  1.0f              // texture size in relation to the object size
     };
     coffeeCupTop.texFilename = "textures/insideCup.png";
@@ -55,14 +55,14 @@ void SceneBuilder::UBuildScene(vector<GLMesh>& scene)
     GLMesh desk;
     desk.p = {
         1.0f,  1.0f, 1.0f, 1.0f, // color data rgba
-        4.0f,  2.0f, 6.0f,       // scale @ x y z
+        2.0f,  1.0f, 6.0f,       // scale @ x y z
         0.0f,  1.0f, 0.0f, 0.0f, // x amount of rotation and rotation @ x y z
         0.0f,  0.0f, 1.0f, 0.0f, // y amount of rotation and rotation @ x y z
         0.0f,  0.0f, 0.0f, 1.0f, // z amount of rotation and rotation @ x y z
         1.0f,  0.0f, 0.0f,       // translation @ x y z
         1.0f,  1.0f              // texture size in relation to the object size
     };
-    desk.texFilename = "wood.png";
+    desk.texFilename = "textures/wood.png";
     ShapeBuilder::UBuildPlane(desk);
     scene.push_back(desk);
 
