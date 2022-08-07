@@ -47,6 +47,7 @@ void ShapeBuilder::UBuildPyramid(GLMesh& mesh)
 	UTranslator(mesh);
 
 }
+
 void ShapeBuilder::UBuildCube(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
@@ -110,6 +111,7 @@ void ShapeBuilder::UBuildCube(GLMesh& mesh)
 
 	UTranslator(mesh);
 }
+
 void ShapeBuilder::UBuildCone(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
@@ -186,6 +188,7 @@ void ShapeBuilder::UBuildCone(GLMesh& mesh)
 
 	UTranslator(mesh);
 }
+
 void ShapeBuilder::UBuildCylinder(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
@@ -193,7 +196,6 @@ void ShapeBuilder::UBuildCylinder(GLMesh& mesh)
 	float r = mesh.radius;
 	float h = mesh.height;
 	float s = mesh.numSides;
-
 
 	constexpr float PI = 3.14f;
 	const float sectorStep = 2.0f * PI / s;
@@ -332,9 +334,11 @@ void ShapeBuilder::UBuildCylinder(GLMesh& mesh)
 
 	mesh.v = v;
 	v.clear();
+
 	UTranslator(mesh);
 
 }
+
 void ShapeBuilder::UBuildHollowCylinder(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
@@ -605,6 +609,7 @@ void ShapeBuilder::UBuildHollowCylinder(GLMesh& mesh)
 	UTranslator(mesh);
 
 }
+
 void ShapeBuilder::UBuildPlane(GLMesh& mesh)
 {
 	// Use this to build the ground, for proper lighting
@@ -632,6 +637,7 @@ void ShapeBuilder::UBuildPlane(GLMesh& mesh)
 	UTranslator(mesh);
 
 }
+
 void ShapeBuilder::UBuildCircle(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
@@ -646,8 +652,6 @@ void ShapeBuilder::UBuildCircle(GLMesh& mesh)
 	const float sectorStep = 2.0f * PI / s;
 
 	vector<float> v;
-
-
 
 	for (auto i = 1; i < s + 1; i++)
 	{
@@ -883,8 +887,6 @@ void ShapeBuilder::UBuildLeaves(GLMesh& mesh)
 	UTranslator(mesh);
 }
 
-
-
 // Standard translate method to move, rotate, and resize the shape
 void ShapeBuilder::UTranslator(GLMesh& mesh)
 {
@@ -920,7 +922,7 @@ void ShapeBuilder::UTranslator(GLMesh& mesh)
 	glEnableVertexAttribArray(0);
 
 	// color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	// texture
@@ -945,6 +947,6 @@ void ShapeBuilder::UTranslator(GLMesh& mesh)
 	mesh.model = mesh.translation * mesh.xrotation * mesh.zrotation * mesh.yrotation * mesh.scale;
 
 	mesh.gUVScale = glm::vec2(mesh.p[22], mesh.p[23]);		// scales the texture
-	//mesh.gUVScale = glm::vec2(2.0f, 2.0f);		// scales the texture
+	mesh.gUVOffset = glm::vec2(mesh.p[24], mesh.p[25]);		// offsets the texture
 
 }

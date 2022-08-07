@@ -43,12 +43,14 @@ struct GLMesh
     glm::mat4 translation;
     glm::mat4 model;
 	glm::vec2 gUVScale;
+    glm::vec2 gUVOffset;
 
     const char* texFilename;
     GLuint textureId;
 
     //texture wrapping modes
     GLint gTexWrapMode = GL_REPEAT;
+
     // GLint gTexWrapModeU = GL_MIRRORED_REPEAT;
     // GLint gTexWrapModeV = GL_CLAMP_TO_EDGE;
     // GLint gTexWrapModeW = GL_CLAMP_TO_BORDER;
