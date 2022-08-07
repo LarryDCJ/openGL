@@ -79,10 +79,10 @@ void UDestroyShaderProgram(GLuint programId);
 void UDestroyTexture(GLuint textureId);
 
 // build shapes
-void UBuildCylinder(GLMesh& mesh, vector<float> properties, float radius, float length);
-void UBuildCone(GLMesh& mesh, vector<float> properties, float radius, float length);
-void UBuildPlane(GLMesh& mesh, vector<float> properties);
-void UBuildCircle(GLMesh& mesh, vector<float> properties, float radius);
+void UBuildCylinder(GLMesh &mesh, vector<float> properties, float radius, float length);
+void UBuildCone(GLMesh &mesh, vector<float> properties, float radius, float length);
+void UBuildPlane(GLMesh &mesh, vector<float> properties);
+void UBuildCircle(GLMesh &mesh, vector<float> properties, float radius);
 
 
 // keyboard and mouse input functions
@@ -128,7 +128,7 @@ const GLchar* fragment_shader_source = GLSL(440,
 
 void main()
 {
-	
+
 	fragmentColor = texture(uTexture, vertexTextureCoordinate) * vec4(shapeColor, 1.0);
 
 }

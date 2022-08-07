@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>         // cout, cerr
-#include <cstdlib>          // EXIT_FAILURE
 #include <vector>           // vector
+#include <cstdlib>          // EXIT_FAILURE
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -11,7 +11,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <learnopengl/camera.h>
+#include <camera.h>
 
 struct GLMesh
 {
@@ -48,7 +48,7 @@ struct GLMesh
     GLuint textureId;
 
     //texture wrapping modes
-    GLint gTexWrapMode = GL_REPEAT;
+    GLint gTextWrapMode = GL_REPEAT;
     // GLint gTexWrapModeU = GL_MIRRORED_REPEAT;
     // GLint gTexWrapModeV = GL_CLAMP_TO_EDGE;
     // GLint gTexWrapModeW = GL_CLAMP_TO_BORDER;

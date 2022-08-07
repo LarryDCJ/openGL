@@ -2,3 +2,9 @@
 build
 *.code-workspace
 *.zip
+CMakeFiles
+/*.cmake
+CMakeCache.txt
+CMakeLists.txt
+DartConfiguration.tcl
+CMakeLists.txt

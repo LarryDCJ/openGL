@@ -1,6 +1,6 @@
+#include "ShapeBuilder.h"
 #include "Mesh.h"
-#include "ShapeBuilder.cpp"
-#include "SceneBuilder.cpp"
+#include "SceneBuilder.h"
 
 // image/texture loading
 #define STB_IMAGE_IMPLEMENTATION
@@ -19,23 +19,19 @@ using namespace std; // Standard namespace
 const char* const WINDOW_TITLE = "Week 5 Milestone"; // Macro for window title
 
 // Variables for window width and height
-const int WINDOW_WIDTH = 800;
-const int WINDOW_HEIGHT = 600;
+const int WINDOW_WIDTH  = 2160;
+const int WINDOW_HEIGHT = 1440;
 
 ShapeBuilder builder;
-
-// // Triangle mesh data
-// GLMesh gMesh;
 
 // Main GLFW window
 GLFWwindow* gWindow = nullptr;
 
 // Shader program
-// GLuint gProgramId;
 GLuint gShaderProgram;
 
 // vector of GLMeshes with each GLMesh type being a different object
-std::vector<GLMesh> scene;
+vector<GLMesh> scene;
 
 // Toggle perspective view
 bool perspective = false;
@@ -49,7 +45,6 @@ bool gFirstMouse = true;
 // Frame Timing
 float gDeltaTime = 0.0f; // time between current frame and last frame
 float gLastFrame = 0.0f;
-
 
 /* User-defined Function prototypes to:
  * initialize the program, set the window size,
@@ -66,21 +61,22 @@ void UResizeWindow(GLFWwindow* window, int width, int height);
 // Processes inputs by the user
 void UProcessInput(GLFWwindow* window);
 
-// Reners the graphics of all the GLMeshes in the scene
+// Renders the graphics of all the GLMeshes in the scene
 void URender(vector<GLMesh> scene);
 
 // Compiles the shades for the program
-bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource, GLuint &programId);
+bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource, GLuint& programId);
 
 // Release the memory after the program is finished
+void UDestroyMesh(GLMesh &mesh);
 void UDestroyShaderProgram(GLuint programId);
-void UDestroyMesh(GLMesh& mesh);
 void UDestroyTexture(GLuint textureId);
 
 
 // build the objects that get pushed_back into the scene vector
-void UBuildCylinder(GLMesh& mesh, vector<float> properties, float radius, float length);
-void drawDesk(GLMesh &mesh);
+void UBuildHollowCylinder(GLMesh &mesh, vector<float> properties, float radius, float length);
+void UBuildPlane(GLMesh &mesh, vector<float> properties, float width, float height);
+
 
 void UMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void UMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
@@ -88,16 +84,14 @@ void UMousePositionCallback(GLFWwindow* window, double xpos, double ypos);
 
 // Creates the textures for the objects in the scene
 bool UCreateTexture(const char* fileName, GLuint& textureId);
-void UCreateMesh(GLMesh& mesh);
-
 
 /* Vertex Shader Source Code*/
-const GLchar * vertexShaderSource = GLSL(440,
+const GLchar *vertexShaderSource = GLSL(440,
     layout (location = 0) in vec3 position; // Vertex data from Vertex Attrib Pointer 0
    	layout (location = 1) in vec3 color;
     layout (location = 2) in vec2 textureCoordinate;  // Color data from Vertex Attrib Pointer 1
 
-    out vec3 shapeColor
+    out vec3 shapeColor;
     out vec2 vertexTextureCoordinate; // variable to transfer color data to the fragment shader
 
     //Global variables for the transform matrices - Camera Movement
@@ -115,10 +109,10 @@ const GLchar * vertexShaderSource = GLSL(440,
 
 
 /* Fragment Shader Source Code*/
-const GLchar * fragmentShaderSource = GLSL(440,
+const GLchar *fragmentShaderSource = GLSL(440,
     out vec4 fragmentColor;
 
-    in vec3 shapeColor
+    in vec3 shapeColor;
     in vec2 vertexTextureCoordinate;
 
     uniform sampler2D uTexture;
@@ -126,7 +120,7 @@ const GLchar * fragmentShaderSource = GLSL(440,
 
     void main()
     {
-        fragmentColor = texture(uTexture, vertexTextureCoordinate) * vec4(shapeColor, 1.0f); // multiply the texture with the color
+        fragmentColor = texture(uTexture, vertexTextureCoordinate) * vec4(shapeColor, 1.0); // multiply the texture with the color
     }
 );
 
@@ -151,8 +145,6 @@ void flipImageVertically(unsigned char *image, int width, int height, int channe
 
 int main(int argc, char* argv[])
 {
-    // gCamera.Pitch = -30.0F;
-
     // Ensure proper initialization
     if (!UInitialize(argc, argv, &gWindow))
         return EXIT_FAILURE;
@@ -163,10 +155,7 @@ int main(int argc, char* argv[])
     if (!UCreateShaderProgram(vertexShaderSource, fragmentShaderSource, gShaderProgram))
         return EXIT_FAILURE;
 
-    // // Create the mesh
-    // UCreateMesh(gMesh); // Calls the function to create the Vertex Buffer Object
-
-    for(auto& m : scene)
+    for (auto& m : scene)
     {
         if (!UCreateTexture(m.texFilename, m.textureId))
         {
@@ -175,7 +164,7 @@ int main(int argc, char* argv[])
         }
 
         // Create the shader program
-    if (!UCreateShaderProgram(vertexShaderSource, fragmentShaderSource, gShaderProgram))
+        if (!UCreateShaderProgram(vertexShaderSource, fragmentShaderSource, gShaderProgram))
         {
             return EXIT_FAILURE;
         }
@@ -187,20 +176,6 @@ int main(int argc, char* argv[])
 
     // We set the texture as texture unit 0
     glUniform1i(glGetUniformLocation(gShaderProgram, "uTexture"), 0);
-
-
-
-
-
-
-    // // Load texture (relative to project's directory)
-    // const char * texFilename = "wood.png";
-    // if (!UCreateTexture(texFilename, gTextureId))
-    // {
-    //     cout << "Failed to load texture " << texFilename << endl;
-    //     return EXIT_FAILURE;
-    // }
-
 
     // render loop checks if the window is open
     int i;
@@ -215,7 +190,6 @@ int main(int argc, char* argv[])
         gLastFrame = currentFrame;
 
         // input
-        // -----
         UProcessInput(gWindow);
 
         // Render this frame
@@ -235,13 +209,9 @@ int main(int argc, char* argv[])
     {
         // Release mesh data
         UDestroyMesh(m);
-
     }
 
     scene.clear();
-
-    // // Release texture
-    // UDestroyTexture(gTextureId);
 
     // Release shader program
     UDestroyShaderProgram(gShaderProgram);
@@ -476,7 +446,6 @@ void URender(vector<GLMesh> scene)
     glEnable(GL_DEPTH_TEST);
 
     // Clear the frame and z buffers
-    // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // camera/view transformation
@@ -529,12 +498,6 @@ void URender(vector<GLMesh> scene)
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(gWindow);    // Flips the the back buffer with the front buffer every frame.
 
-}
-
-// Implements the UCreateMesh function
-void UCreateMesh(GLMesh &mesh)
-{
-    drawDesk(mesh);
 }
 
 bool UCreateTexture(const char* filename, GLuint &textureId)
@@ -655,77 +618,3 @@ void UDestroyShaderProgram(GLuint programId)
     glDeleteProgram(programId);
 }
 
-void drawDesk(GLMesh &mesh)
-{
-    // Vertex data
-    GLfloat verts[] = {
-        // Desktop
-        //Positions          //Texture Coordinates
-        -1.0f, -0.00f, -0.5f,  0.0f, 0.0f,
-         1.0f, -0.00f, -0.5f,  1.0f, 0.0f,
-         1.0f,  0.05f, -0.5f,  1.0f, 1.0f,
-         1.0f,  0.05f, -0.5f,  1.0f, 1.0f,
-        -1.0f,  0.05f, -0.5f,  0.0f, 1.0f,
-        -1.0f, -0.00f, -0.5f,  0.0f, 0.0f,
-
-        -1.0f, -0.00f,  0.5f,  0.0f, 0.0f,
-         1.0f, -0.00f,  0.5f,  1.0f, 0.0f,
-         1.0f,  0.05f,  0.5f,  1.0f, 1.0f,
-         1.0f,  0.05f,  0.5f,  1.0f, 1.0f,
-        -1.0f,  0.05f,  0.5f,  0.0f, 1.0f,
-        -1.0f, -0.00f,  0.5f,  0.0f, 0.0f,
-
-        -1.0f,  0.05f,  0.5f,  1.0f, 0.0f,
-        -1.0f,  0.05f, -0.5f,  1.0f, 1.0f,
-        -1.0f, -0.00f, -0.5f,  0.0f, 1.0f,
-        -1.0f, -0.00f, -0.5f,  0.0f, 1.0f,
-        -1.0f, -0.00f,  0.5f,  0.0f, 0.0f,
-        -1.0f,  0.05f,  0.5f,  1.0f, 0.0f,
-
-         1.0f,  0.05f,  0.5f,  1.0f, 0.0f,
-         1.0f,  0.05f, -0.5f,  1.0f, 1.0f,
-         1.0f, -0.00f, -0.5f,  0.0f, 1.0f,
-         1.0f, -0.00f, -0.5f,  0.0f, 1.0f,
-         1.0f, -0.00f,  0.5f,  0.0f, 0.0f,
-         1.0f,  0.05f,  0.5f,  1.0f, 0.0f,
-
-        -1.0f, -0.00f, -0.5f,  0.0f, 1.0f,
-         1.0f, -0.00f, -0.5f,  1.0f, 1.0f,
-         1.0f, -0.00f,  0.5f,  1.0f, 0.0f,
-         1.0f, -0.00f,  0.5f,  1.0f, 0.0f,
-        -1.0f, -0.00f,  0.5f,  0.0f, 0.0f,
-        -1.0f, -0.00f, -0.5f,  0.0f, 1.0f,
-
-        -1.0f,  0.05f, -0.5f,  0.0f, 1.0f,
-         1.0f,  0.05f, -0.5f,  1.0f, 1.0f,
-         1.0f,  0.05f,  0.5f,  1.0f, 0.0f,
-         1.0f,  0.05f,  0.5f,  1.0f, 0.0f,
-        -1.0f,  0.05f,  0.5f,  0.0f, 0.0f,
-        -1.0f,  0.05f, -0.5f,  0.0f, 1.0f
-
-    };
-
-    const GLuint floatsPerVertex = 3;
-    const GLuint floatsPerUV = 2;
-
-    mesh.nIndices = sizeof(verts) / (sizeof(verts[0])) * (floatsPerVertex + floatsPerUV);
-
-    glGenVertexArrays(1, &mesh.vao); // we can also generate multiple VAOs or buffers at the same time
-    glBindVertexArray(mesh.vao);
-
-    // Create VBO
-    glGenBuffers(1, &mesh.vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo); // Activates the buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // Sends vertex or coordinate data to the GPU
-
-    // Strides between vertex coordinates
-    GLint stride =  sizeof(float) * (floatsPerVertex + floatsPerUV);
-
-    // Create Vertex Attribute Pointers
-    glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex)));
-    glEnableVertexAttribArray(2);
-
-}
