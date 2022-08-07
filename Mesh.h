@@ -48,7 +48,7 @@ struct GLMesh
     GLuint textureId;
 
     //texture wrapping modes
-    GLint gTextWrapMode = GL_REPEAT;
+    GLint gTexWrapMode = GL_REPEAT;
     // GLint gTexWrapModeU = GL_MIRRORED_REPEAT;
     // GLint gTexWrapModeV = GL_CLAMP_TO_EDGE;
     // GLint gTexWrapModeW = GL_CLAMP_TO_BORDER;
@@ -56,5 +56,4 @@ struct GLMesh
     class Mesh
     {
     };
-
 };

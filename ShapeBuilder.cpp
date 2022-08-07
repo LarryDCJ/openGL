@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void ShapeBuilder::UBuildPyramid(GLMesh &mesh)
+void ShapeBuilder::UBuildPyramid(GLMesh& mesh)
 {
 	// build a pyramid
 
@@ -47,63 +47,70 @@ void ShapeBuilder::UBuildPyramid(GLMesh &mesh)
 	UTranslator(mesh);
 
 }
-
-void ShapeBuilder::UBuildCube(GLMesh &mesh)
+void ShapeBuilder::UBuildCube(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
 
 	mesh.v = {
-		-1.0f,	0.00f,  -0.5f,	 0.0f,	 0.0f,	1.0f,	1.0f,	0.0f,	0.0f,	// front left
-		 1.0f,	0.00f,  -0.5f,	 0.0f,	 0.0f,	1.0f,	1.0f,	1.0f,	0.0f,
-		 1.0f,	0.05f,  -0.5f,	 0.0f,	 0.0f,	1.0f,	1.0f,	1.0f,	1.0f,
-		 1.0f,	0.05f,  -0.5f,	 0.0f,	 0.0f,	1.0f,	1.0f,	1.0f,	1.0f,	// front right
-		-1.0f,	0.05f,  -0.5f,	 0.0f,	 0.0f,	1.0f,	1.0f,	0.0f,	1.0f,
-		-1.0f,	0.00f,  -0.5f,	 0.0f,	 0.0f,	1.0f,	1.0f,	0.0f,	0.0f,
+		0.5f,	0.0f,	0.5f,	0.0f,	0.0f,	1.0f,	1.0f,	0.25f,	0.5f,	// front left
+		-0.5f,	0.0f,	0.5f,	0.0f,	0.0f,	1.0f,	1.0f,	0.0f,	0.5f,
+		-0.5f,	1.0f,	0.5f,	0.0f,	0.0f,	1.0f,	1.0f,	0.0f,	1.0f,
+
+		0.5f,	0.0f,	0.5f,	0.0f,	0.0f,	1.0f,	1.0f,	0.25f,	0.5f,	// front right
+		0.5f,	1.0f,	0.5f,	0.0f,	0.0f,	1.0f,	1.0f,	0.25f,	1.0f,
+		-0.5f,	1.0f,	0.5f,	0.0f,	0.0f,	1.0f,	1.0f,	0.0f,	1.0f,
 
 
-		-1.0f,	0.05f,	 0.5f,	 1.0f,	 0.0f,	0.0f,	1.0f,	0.25f,	0.5f,	// right front
-		 1.0f,	0.05f,	 0.5f,	 1.0f,	 0.0f,	0.0f,	1.0f,	0.25f,	1.0f,
-		 1.0f,	0.00f,	 0.5f,	 1.0f,	 0.0f,	0.0f,	1.0f,	0.5f,	1.0f,
-		 1.0f,	0.00f,	 0.5f,	 1.0f,	 0.0f,	0.0f,	1.0f,	0.25f,	0.5f,	// right back
-		-1.0f,	0.00f,	 0.5f,	 1.0f,	 0.0f,	0.0f,	1.0f,	0.5f,	0.5f,
-		-1.0f,	0.00f,	 0.5f,	 1.0f,	 0.0f,	0.0f,	1.0f,	0.5f,	1.0f,
+		0.5f,	0.0f,	0.5f,	1.0f,	0.0f,	0.0f,	1.0f,	0.25f,	0.5f,	// right front
+		0.5f,	1.0f,	0.5f,	1.0f,	0.0f,	0.0f,	1.0f,	0.25f,	1.0f,
+		0.5f,	1.0f,	-0.5f,	1.0f,	0.0f,	0.0f,	1.0f,	0.5f,	1.0f,
+
+		0.5f,	0.0f,	0.5f,	1.0f,	0.0f,	0.0f,	1.0f,	0.25f,	0.5f,	// right back
+		0.5f,	0.0f,	-0.5f,	1.0f,	0.0f,	0.0f,	1.0f,	0.5f,	0.5f,
+		0.5f,	1.0f,	-0.5f,	1.0f,	0.0f,	0.0f,	1.0f,	0.5f,	1.0f,
 
 
-		-1.0f,	0.05f,	 0.5f,	 0.0f,	 0.0f,	-1.0f,	1.0f,	0.5f,	0.5f,	// back left
-		-1.0f,	0.05f,	-0.5f,	 0.0f,	 0.0f,	-1.0f,	1.0f,	0.75f,	0.5f,
-		-1.0f,	0.00f,	-0.5f,	 0.0f,	 0.0f,	-1.0f,	1.0f,	0.75f,	1.0f,
-		-1.0f,	0.00f,	-0.5f,	 0.0f,	 0.0f,	-1.0f,	1.0f,	0.5f,	0.5f,	// back right
-		-1.0f,	0.00f,	 0.5f,	 0.0f,	 0.0f,	-1.0f,	1.0f,	0.5f,	1.0f,
-		-1.0f,	0.05f,	 0.5f,	 0.0f,	 0.0f,	-1.0f,	1.0f,	0.75f,	1.0f,
+		0.5f,	0.0f,	-0.5f,	0.0f,	0.0f,	-1.0f,	1.0f,	0.5f,	0.5f,	// back left
+		-0.5f,	0.0f,	-0.5f,	0.0f,	0.0f,	-1.0f,	1.0f,	0.75f,	0.5f,
+		-0.5f,	1.0f,	-0.5f,	0.0f,	0.0f,	-1.0f,	1.0f,	0.75f,	1.0f,
+
+		0.5f,	0.0f,	-0.5f,	0.0f,	0.0f,	-1.0f,	1.0f,	0.5f,	0.5f,	// back right
+		0.5f,	1.0f,	-0.5f,	0.0f,	0.0f,	-1.0f,	1.0f,	0.5f,	1.0f,
+		-0.5f,	1.0f,	-0.5f,	0.0f,	0.0f,	-1.0f,	1.0f,	0.75f,	1.0f,
 
 
-		 1.0f,	0.05f,	 0.5f,	-1.0f,	 0.0f,	0.0f,	1.0f,	1.0f,	0.5f,	// left back
-		 1.0f,	0.05f,	-0.5f,	-1.0f,	 0.0f,	0.0f,	1.0f,	1.0f,	1.0f,
-		 1.0f,	0.00f,	-0.5f,	-1.0f,	 0.0f,	0.0f,	1.0f,	0.75f,	1.0f,
-		 1.0f,	0.00f,	-0.5f,	-1.0f,	 0.0f,	0.0f,	1.0f,	1.0f,	0.5f,	// left front
-		 1.0f,	0.00f,	 0.5f,	-1.0f,	 0.0f,	0.0f,	1.0f,	0.75f,	0.5f,
-		 1.0f,	0.05f,	 0.5f,	-1.0f,	 0.0f,	0.0f,	1.0f,	0.75f,	1.0f,
+		-0.5f,	0.0f,	0.5f,	-1.0f,	0.0f,	0.0f,	1.0f,	1.0f,	0.5f,	// left back
+		-0.5f,	1.0f,	0.5f,	-1.0f,	0.0f,	0.0f,	1.0f,	1.0f,	1.0f,
+		-0.5f,	1.0f,	-0.5f,	-1.0f,	0.0f,	0.0f,	1.0f,	0.75f,	1.0f,
 
-		-1.0f,	0.00f,	-0.5f,	-0.0f,	 1.0f,	0.0f,	1.0f,	0.0f,	0.0f,	// top left
-		 1.0f,	0.00f,	-0.5f,	-0.0f,	 1.0f,	0.0f,	1.0f,	0.0f,	0.5f,
-		 1.0f,	0.00f,	 0.5f,	-0.0f,	 1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
-		 1.0f,	0.00f,	 0.5f,	-0.0f,	 1.0f,	0.0f,	1.0f,	0.0f,	0.5f,	// top right
-		-1.0f,	0.00f,	 0.5f,	-0.0f,	 1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
-		-1.0f,	0.00f,	-0.5f,	-0.0f,	 1.0f,	0.0f,	1.0f,	0.25f,	0.5f,
+		-0.5f,	0.0f,	0.5f,	-1.0f,	0.0f,	0.0f,	1.0f,	1.0f,	0.5f,	// left front
+		-0.5f,	0.0f,	-0.5f,	-1.0f,	0.0f,	0.0f,	1.0f,	0.75f,	0.5f,
+		-0.5f,	1.0f,	-0.5f,	-1.0f,	0.0f,	0.0f,	1.0f,	0.75f,	1.0f,
 
-		-1.0f,	0.05f,	-0.5f,	 0.0f,	-1.0f,	0.0f,	1.0f,	0.0f,	0.0f,	// bottom left
-		 1.0f,	0.05f,	-0.5f,	 0.0f,	-1.0f,	0.0f,	1.0f,	0.0f,	0.5f,
-		 1.0f,	0.05f,	 0.5f,	 0.0f,	-1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
-		 1.0f,	0.05f,	 0.5f,	 0.0f,	-1.0f,	0.0f,	1.0f,	0.0f,	0.5f,	// bottom right
-		-1.0f,	0.05f,	 0.5f,	 0.0f,	-1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
-		-1.0f,	0.05f,	-0.5f,	 0.0f,	-1.0f,	0.0f,	1.0f,	0.25f,	0.5f,
+
+
+
+		-0.5f,	1.0f,	0.5f,	-0.0f,	1.0f,	0.0f,	1.0f,	0.0f,	0.0f,	// top left
+		-0.5f,	1.0f,	-0.5f,	-0.0f,	1.0f,	0.0f,	1.0f,	0.0f,	0.5f,
+		0.5f,	1.0f,	0.5f,	-0.0f,	1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
+
+		-0.5f,	1.0f,	-0.5f,	-0.0f,	1.0f,	0.0f,	1.0f,	0.0f,	0.5f,	// top right
+		0.5f,	1.0f,	0.5f,	-0.0f,	1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
+		0.5f,	1.0f,	-0.5f,	-0.0f,	1.0f,	0.0f,	1.0f,	0.25f,	0.5f,
+
+		-0.5f,	0.0f,	0.5f,	0.0f,	-1.0f,	0.0f,	1.0f,	0.0f,	0.0f,	// bottom left
+		-0.5f,	0.0f,	-0.5f,	0.0f,	-1.0f,	0.0f,	1.0f,	0.0f,	0.5f,
+		0.5f,	0.0f,	0.5f,	0.0f,	-1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
+
+		-0.5f,	0.0f,	-0.5f,	0.0f,	-1.0f,	0.0f,	1.0f,	0.0f,	0.5f,	// bottom right
+		0.5f,	0.0f,	0.5f,	0.0f,	-1.0f,	0.0f,	1.0f,	0.25f,	0.0f,
+		0.5f,	0.0f,	-0.5f,	0.0f,	-1.0f,	0.0f,	1.0f,	0.25f,	0.5f,
 
 	};
 
 	UTranslator(mesh);
 }
-
-void ShapeBuilder::UBuildCone(GLMesh &mesh)
+void ShapeBuilder::UBuildCone(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
 
@@ -179,13 +186,11 @@ void ShapeBuilder::UBuildCone(GLMesh &mesh)
 
 	UTranslator(mesh);
 }
-
-void ShapeBuilder::UBuildCylinder(GLMesh &mesh)
+void ShapeBuilder::UBuildCylinder(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
 
 	float r = mesh.radius;
-	float l = mesh.length;
 	float h = mesh.height;
 	float s = mesh.numSides;
 
@@ -330,8 +335,7 @@ void ShapeBuilder::UBuildCylinder(GLMesh &mesh)
 	UTranslator(mesh);
 
 }
-
-void ShapeBuilder::UBuildHollowCylinder(GLMesh &mesh)
+void ShapeBuilder::UBuildHollowCylinder(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
 
@@ -601,8 +605,7 @@ void ShapeBuilder::UBuildHollowCylinder(GLMesh &mesh)
 	UTranslator(mesh);
 
 }
-
-void ShapeBuilder::UBuildPlane(GLMesh &mesh)
+void ShapeBuilder::UBuildPlane(GLMesh& mesh)
 {
 	// Use this to build the ground, for proper lighting
 
@@ -629,8 +632,7 @@ void ShapeBuilder::UBuildPlane(GLMesh &mesh)
 	UTranslator(mesh);
 
 }
-
-void ShapeBuilder::UBuildCircle(GLMesh &mesh)
+void ShapeBuilder::UBuildCircle(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
 
@@ -681,7 +683,7 @@ void ShapeBuilder::UBuildCircle(GLMesh &mesh)
 	UTranslator(mesh);
 }
 
-void ShapeBuilder::UBuildPotBottom(GLMesh &mesh)
+void ShapeBuilder::UBuildPotBottom(GLMesh& mesh)
 {
 	vector<float> c = { mesh.p[0], mesh.p[1], mesh.p[2], mesh.p[3] };
 
@@ -712,13 +714,13 @@ void ShapeBuilder::UBuildPotBottom(GLMesh &mesh)
 
 
 		// triangle fan, bottom
-		v.insert(v.end(), { 0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.5f, 0.125f });	// origin (0.5, 0.5) works best for textures
-		v.insert(v.end(), { 0.5f + ir * cos(i * sectorStep) ,							// x
-										0.0f ,											// y
-										0.5f + ir * sin(i * sectorStep) ,				// z
+		v.insert(v.end(), { 0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.5f, 0.125f });			// origin (0.5, 0.5) works best for textures
+		v.insert(v.end(), { 0.5f + ir * cos(i * sectorStep) ,			// x
+										0.0f ,										// y
+										0.5f + ir * sin(i * sectorStep) ,			// z
 										c[0], -1.0f, c[2], 1.0f,						// color data r g b a
-										0.5f + (0.5f * cos((i)*sectorStep)) ,			// texture x; adding the origin for proper alignment
-										(0.125f + (0.125f * sin((i)*sectorStep))) });	// texture y
+										0.5f + (0.5f * cos((i)*sectorStep)) ,		// texture x; adding the origin for proper alignment
+										(0.125f + (0.125f * sin((i)*sectorStep))) });		// texture y
 
 
 		v.insert(v.end(), { 0.5f + ir * cos((i + 1) * sectorStep) ,
@@ -831,7 +833,7 @@ void ShapeBuilder::UBuildPotBottom(GLMesh &mesh)
 	UTranslator(mesh);
 }
 
-void ShapeBuilder::UBuildLeaves(GLMesh &mesh)
+void ShapeBuilder::UBuildLeaves(GLMesh& mesh)
 {
 	mesh.v = {
 		0.5f,	0.0f,	0.5f,	0.0f,	0.0f,	1.0f,	1.0f,	0.25f,	0.5f,	// front right
@@ -881,8 +883,10 @@ void ShapeBuilder::UBuildLeaves(GLMesh &mesh)
 	UTranslator(mesh);
 }
 
+
+
 // Standard translate method to move, rotate, and resize the shape
-void ShapeBuilder::UTranslator(GLMesh &mesh)
+void ShapeBuilder::UTranslator(GLMesh& mesh)
 {
 	// build the mesh
 
@@ -899,8 +903,13 @@ void ShapeBuilder::UTranslator(GLMesh &mesh)
 	glGenBuffers(1, &mesh.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo); // Activates the buffer
 
-	// Sends vertex or coordinate data to the GPU
-	glBufferData(GL_ARRAY_BUFFER, mesh.v.size() * sizeof(float), &mesh.v.front(), GL_STATIC_DRAW);
+	// use vector instead of array
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		mesh.v.size() * sizeof(float),
+		&mesh.v.front(),
+		GL_STATIC_DRAW
+	); // Sends vertex or coordinate data to the GPU
 
 	// Strides between vertex coordinates
 	constexpr GLint stride = sizeof(float) * (floatsPerVertex + floatsPerUV + floatsPerColor);
@@ -936,6 +945,6 @@ void ShapeBuilder::UTranslator(GLMesh &mesh)
 	mesh.model = mesh.translation * mesh.xrotation * mesh.zrotation * mesh.yrotation * mesh.scale;
 
 	mesh.gUVScale = glm::vec2(mesh.p[22], mesh.p[23]);		// scales the texture
+	//mesh.gUVScale = glm::vec2(2.0f, 2.0f);		// scales the texture
 
 }
-

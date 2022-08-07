@@ -19,8 +19,8 @@ using namespace std; // Standard namespace
 const char* const WINDOW_TITLE = "Week 5 Milestone"; // Macro for window title
 
 // Variables for window width and height
-const int WINDOW_WIDTH  = 2160;
-const int WINDOW_HEIGHT = 1440;
+const int WINDOW_WIDTH  = 1920;
+const int WINDOW_HEIGHT = 1080;
 
 ShapeBuilder builder;
 
@@ -37,7 +37,8 @@ vector<GLMesh> scene;
 bool perspective = false;
 
 // Movement - Camera
-Camera gCamera(glm::vec3(0.0f, 2.5f, 4.0f)); // (horizontal vertical depth)( up xyz ) yaw pitch
+Camera gCamera(glm::vec3(-5.0f, 4.5f, -0.3f), glm::vec3(0.0f, 1.0f, 0.0f), 10.0f, -30.0f);
+
 float gLastX = WINDOW_WIDTH / 2.0f;
 float gLastY = WINDOW_HEIGHT / 2.0f;
 bool gFirstMouse = true;
@@ -65,18 +66,17 @@ void UProcessInput(GLFWwindow* window);
 void URender(vector<GLMesh> scene);
 
 // Compiles the shades for the program
-bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource, GLuint& programId);
+bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource,
+    GLuint &programId);
 
 // Release the memory after the program is finished
 void UDestroyMesh(GLMesh &mesh);
 void UDestroyShaderProgram(GLuint programId);
 void UDestroyTexture(GLuint textureId);
 
-
 // build the objects that get pushed_back into the scene vector
 void UBuildHollowCylinder(GLMesh &mesh, vector<float> properties, float radius, float length);
-void UBuildPlane(GLMesh &mesh, vector<float> properties, float width, float height);
-
+void UBuildPlane(GLMesh &mesh, vector<float> properties);
 
 void UMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void UMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
@@ -182,7 +182,8 @@ int main(int argc, char* argv[])
     while (!glfwWindowShouldClose(gWindow))
     {
         // Sets the background color of the window to beige (it will be implicitely used by glClear)
-        glClearColor(245.0f, 245.0f, 220.0f, 1.0f);
+        // glClearColor(0.0f, 245.0f, 220.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // per-frame timing
         float currentFrame = glfwGetTime();
@@ -299,66 +300,7 @@ void UProcessInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         gCamera.ProcessKeyboard(DOWN, gDeltaTime);
 
-    // if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && gTexWrapMode != GL_REPEAT)
-    // {
-    //     glBindTexture(GL_TEXTURE_2D, gTextureId);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    //     glBindTexture(GL_TEXTURE_2D, 0);
-
-    //     gTexWrapMode = GL_REPEAT;
-
-    //     cout << "Current Texture Wrapping Mode: REPEAT" << endl;
-    // }
-    // else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && gTexWrapMode != GL_MIRRORED_REPEAT)
-    // {
-    //     glBindTexture(GL_TEXTURE_2D, gTextureId);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    //     glBindTexture(GL_TEXTURE_2D, 0);
-
-    //     gTexWrapMode = GL_MIRRORED_REPEAT;
-
-    //     cout << "Current Texture Wrapping Mode: MIRRORED REPEAT" << endl;
-    // }
-    // else if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && gTexWrapMode != GL_CLAMP_TO_EDGE)
-    // {
-    //     glBindTexture(GL_TEXTURE_2D, gTextureId);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //     glBindTexture(GL_TEXTURE_2D, 0);
-
-    //     gTexWrapMode = GL_CLAMP_TO_EDGE;
-
-    //     cout << "Current Texture Wrapping Mode: CLAMP TO EDGE" << endl;
-    // }
-    // else if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && gTexWrapMode != GL_CLAMP_TO_BORDER)
-    // {
-    //     float color[] = {1.0f, 0.0f, 1.0f, 1.0f};
-    //     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
-
-    //     glBindTexture(GL_TEXTURE_2D, gTextureId);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    //     glBindTexture(GL_TEXTURE_2D, 0);
-
-    //     gTexWrapMode = GL_CLAMP_TO_BORDER;
-
-    //     cout << "Current Texture Wrapping Mode: CLAMP TO BORDER" << endl;
-    // }
-
-    // if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
-    // {
-    //     gUVScale += 0.1f;
-    //     cout << "Current scale (" << gUVScale[0] << ", " << gUVScale[1] << ")" << endl;
-    // }
-    // else if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
-    // {
-    //     gUVScale -= 0.1f;
-    //     cout << "Current scale (" << gUVScale[0] << ", " << gUVScale[1] << ")" << endl;
-    // }
-
-    	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 		perspective = false;
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
 		perspective = true;
@@ -458,9 +400,8 @@ void URender(vector<GLMesh> scene)
         projection = glm::perspective(glm::radians(gCamera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f);
     }
     else
-    {
+
         projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
-    }
 
     glUseProgram(gShaderProgram);
 
@@ -552,7 +493,7 @@ void UDestroyMesh(GLMesh& mesh)
 }
 
 // Implements the UCreateShaders function
-bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource, GLuint& programId)
+bool UCreateShaderProgram(const char* vtxShaderSource, const char* fragShaderSource, GLuint &programId)
 {
     // Compilation and linkage error reporting
     int success = 0;
